@@ -573,16 +573,6 @@ void TrayIcon::actionIgnoreEmails()
 }
 
 void TrayIcon::actionNewEvent() {
-    Settings* settings = BirdtrayApp::get()->getSettings();
-    QString executable;
-    QStringList args;
-
-    if ( !settings->getStartThunderbirdCmdline( executable, args ) )
-        return;
-
-    args << "-calendar";
-    QProcess::startDetached(executable, args);
-
     if (!mWinTools)
         return;
 
@@ -592,39 +582,57 @@ void TrayIcon::actionNewEvent() {
         return;
     }
 
-    // Give it a brief moment to switch tabs and focus, then send Ctrl+I.
-    QTimer::singleShot(300, this, [winId]() {
+    bool wasHidden = mWinTools->isHidden();
+
 #ifdef Q_OS_WIN
-        INPUT inputs[4] = {};
-        inputs[0].type = INPUT_KEYBOARD;
-        inputs[0].ki.wVk = VK_CONTROL;
-        inputs[1].type = INPUT_KEYBOARD;
-        inputs[1].ki.wVk = 'I';
-        inputs[2].type = INPUT_KEYBOARD;
-        inputs[2].ki.wVk = 'I';
-        inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
-        inputs[3].type = INPUT_KEYBOARD;
-        inputs[3].ki.wVk = VK_CONTROL;
-        inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
-        SendInput(4, inputs, sizeof(INPUT));
+    INPUT inputs[4] = {};
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_CONTROL;
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = 'I';
+    inputs[2].type = INPUT_KEYBOARD;
+    inputs[2].ki.wVk = 'I';
+    inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+    inputs[3].type = INPUT_KEYBOARD;
+    inputs[3].ki.wVk = VK_CONTROL;
+    inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(4, inputs, sizeof(INPUT));
 #else
-        QString cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+i").arg(winId);
-        QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+    QString cmd;
+    if (wasHidden) {
+        cmd = QString(
+            "xprop -id %1 -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 && "
+            "sleep 0.1 && "
+            "xdotool windowmap %1 && "
+            "sleep 0.1 && "
+            "wmctrl -i -a %1 && "
+            "sleep 0.1 && "
+            "initial_count=$(xdotool search --class thunderbird | wc -l) && "
+            "xdotool key ctrl+i && "
+            "for i in {1..20}; do "
+            "  current_count=$(xdotool search --class thunderbird | wc -l); "
+            "  if [ \"$current_count\" -gt \"$initial_count\" ]; then break; fi; "
+            "  sleep 0.1; "
+            "done && "
+            "sleep 0.2 && "
+            "xdotool windowunmap %1 && "
+            "sleep 0.1 && "
+            "xprop -id %1 -remove _NET_WM_WINDOW_OPACITY"
+        ).arg(winId);
+    } else {
+        cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+i").arg(winId);
+    }
+    QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+    if (wasHidden) {
+        QTimer::singleShot(2500, this, [this]() {
+            mThunderbirdWindowHide = true;
+            onThunderbirdWindowHidden();
+        });
+    }
 #endif
-    });
 }
 
 void TrayIcon::actionNewTask() {
-    Settings* settings = BirdtrayApp::get()->getSettings();
-    QString executable;
-    QStringList args;
-
-    if ( !settings->getStartThunderbirdCmdline( executable, args ) )
-        return;
-
-    args << "-calendar";
-    QProcess::startDetached(executable, args);
-
     if (!mWinTools)
         return;
 
@@ -634,26 +642,54 @@ void TrayIcon::actionNewTask() {
         return;
     }
 
-    // Give it a brief moment to switch tabs and focus, then send Ctrl+D.
-    QTimer::singleShot(300, this, [winId]() {
+    bool wasHidden = mWinTools->isHidden();
+
 #ifdef Q_OS_WIN
-        INPUT inputs[4] = {};
-        inputs[0].type = INPUT_KEYBOARD;
-        inputs[0].ki.wVk = VK_CONTROL;
-        inputs[1].type = INPUT_KEYBOARD;
-        inputs[1].ki.wVk = 'D';
-        inputs[2].type = INPUT_KEYBOARD;
-        inputs[2].ki.wVk = 'D';
-        inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
-        inputs[3].type = INPUT_KEYBOARD;
-        inputs[3].ki.wVk = VK_CONTROL;
-        inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
-        SendInput(4, inputs, sizeof(INPUT));
+    INPUT inputs[4] = {};
+    inputs[0].type = INPUT_KEYBOARD;
+    inputs[0].ki.wVk = VK_CONTROL;
+    inputs[1].type = INPUT_KEYBOARD;
+    inputs[1].ki.wVk = 'D';
+    inputs[2].type = INPUT_KEYBOARD;
+    inputs[2].ki.wVk = 'D';
+    inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+    inputs[3].type = INPUT_KEYBOARD;
+    inputs[3].ki.wVk = VK_CONTROL;
+    inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+    SendInput(4, inputs, sizeof(INPUT));
 #else
-        QString cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+d").arg(winId);
-        QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+    QString cmd;
+    if (wasHidden) {
+        cmd = QString(
+            "xprop -id %1 -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 && "
+            "sleep 0.1 && "
+            "xdotool windowmap %1 && "
+            "sleep 0.1 && "
+            "wmctrl -i -a %1 && "
+            "sleep 0.1 && "
+            "initial_count=$(xdotool search --class thunderbird | wc -l) && "
+            "xdotool key ctrl+d && "
+            "for i in {1..20}; do "
+            "  current_count=$(xdotool search --class thunderbird | wc -l); "
+            "  if [ \"$current_count\" -gt \"$initial_count\" ]; then break; fi; "
+            "  sleep 0.1; "
+            "done && "
+            "sleep 0.2 && "
+            "xdotool windowunmap %1 && "
+            "sleep 0.1 && "
+            "xprop -id %1 -remove _NET_WM_WINDOW_OPACITY"
+        ).arg(winId);
+    } else {
+        cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+d").arg(winId);
+    }
+    QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+    if (wasHidden) {
+        QTimer::singleShot(2500, this, [this]() {
+            mThunderbirdWindowHide = true;
+            onThunderbirdWindowHidden();
+        });
+    }
 #endif
-    });
 }
 
 void TrayIcon::actionClearIgnoredEmails()
