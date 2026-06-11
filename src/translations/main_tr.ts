@@ -723,7 +723,7 @@ Lütfen doğru profiller dizinini seçtiğinizden emin olun.</translation>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Yeni E-posta Mesajı</translation>
+        <translation type="vanished">Yeni E-posta Mesajı</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -796,6 +796,22 @@ Lütfen doğru profiller dizinini seçtiğinizden emin olun.</translation>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Bir daha sorma</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

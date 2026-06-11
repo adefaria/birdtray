@@ -32,6 +32,12 @@ class WindowTools_X11 : public WindowTools
         // Whether window is hidden or not
         virtual bool    isHidden();
 
+        // Whether window is active/focused or not
+        virtual bool    isActive() override;
+
+        // Return window ID (cast to unsigned long)
+        virtual unsigned long getWindowId() const override;
+
         // Closes the application via WM_CLOSE or similar
         virtual bool    closeWindow();
 

@@ -737,7 +737,7 @@ Please make sure you selected the correct profiles directory.</source>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>新建邮件</translation>
+        <translation type="vanished">新建邮件</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -810,6 +810,22 @@ Please make sure you selected the correct profiles directory.</source>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>不再询问</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

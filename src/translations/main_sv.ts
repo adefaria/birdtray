@@ -736,7 +736,7 @@ Tillse att du har valt rätt profilmapp.</translation>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nytt e-postmeddelande</translation>
+        <translation type="vanished">Nytt e-postmeddelande</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -809,6 +809,22 @@ Tillse att du har valt rätt profilmapp.</translation>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Fråga inte igen</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

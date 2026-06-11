@@ -83,6 +83,9 @@ class TrayIcon : public QSystemTrayIcon
         void    actionUnsnooze();
         void    actionNewEmail();
         void    actionIgnoreEmails();
+        void    actionNewEvent();
+        void    actionNewTask();
+        void    actionClearIgnoredEmails();
 
         void    actionSystrayIconActivated( QSystemTrayIcon::ActivationReason reason );
 
@@ -167,6 +170,9 @@ class TrayIcon : public QSystemTrayIcon
 
         // Ignore unread emails item (we modify its text) - only if we have this functionality
         QAction *       mMenuIgnoreUnreads;
+
+        // Clear ignored unread emails item
+        QAction *       mMenuClearIgnoredUnreads;
 
         // Unsnooze menu item
         QAction *       mMenuUnsnooze;

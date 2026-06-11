@@ -448,6 +448,16 @@ bool WindowTools_X11::isHidden()
     return mHiddenStateCounter == 2 && mWinId != activeWindow( x11_display() );
 }
 
+bool WindowTools_X11::isActive()
+{
+    return mWinId != None && mWinId == activeWindow( x11_display() );
+}
+
+unsigned long WindowTools_X11::getWindowId() const
+{
+    return mWinId;
+}
+
 bool WindowTools_X11::closeWindow()
 {
     if ( !checkWindow() )

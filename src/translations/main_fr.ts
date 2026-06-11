@@ -732,7 +732,7 @@ Assurez-vous d&apos;avoir sélectionné le bon répertoire.</translation>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nouveau mail</translation>
+        <translation type="vanished">Nouveau mail</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -805,6 +805,22 @@ Assurez-vous d&apos;avoir sélectionné le bon répertoire.</translation>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Ne plus demander</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

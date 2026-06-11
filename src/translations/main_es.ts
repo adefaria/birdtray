@@ -736,7 +736,7 @@ Por favor, asegúrese que ha seleccionado el directorio de perfiles correcto.</t
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nuevo mensaje de correo</translation>
+        <translation type="vanished">Nuevo mensaje de correo</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -809,6 +809,22 @@ Por favor, asegúrese que ha seleccionado el directorio de perfiles correcto.</t
     <message>
         <source>Don&apos;t ask again</source>
         <translation>No preguntar de nuevo</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

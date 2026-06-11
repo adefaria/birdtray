@@ -42,6 +42,16 @@ public:
      */
     bool isHidden() override;
     
+    /**
+     * @return Whether window is active/focused or not.
+     */
+    bool isActive() override;
+    
+    /**
+     * @return The window ID.
+     */
+    unsigned long getWindowId() const override;
+    
     //
     /**
      * Asks Thunderbird to close.

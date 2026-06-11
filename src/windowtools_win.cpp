@@ -148,6 +148,14 @@ bool WindowTools_Win::isHidden() {
     return isValid() && !IsWindowVisible(this->thunderbirdWindow);
 }
 
+bool WindowTools_Win::isActive() {
+    return isValid() && GetForegroundWindow() == thunderbirdWindow;
+}
+
+unsigned long WindowTools_Win::getWindowId() const {
+    return reinterpret_cast<unsigned long>(thunderbirdWindow);
+}
+
 bool WindowTools_Win::closeWindow() {
     if (!checkWindow()) {
         return false;

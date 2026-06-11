@@ -736,7 +736,7 @@ Upewnij się, że wybrałeś poprawny folder.</translation>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nowa wiadomość</translation>
+        <translation type="vanished">Nowa wiadomość</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -809,6 +809,22 @@ Upewnij się, że wybrałeś poprawny folder.</translation>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Nie pytaj ponownie</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

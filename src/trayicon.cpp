@@ -27,6 +27,7 @@ TrayIcon::TrayIcon(bool showSettings)
 
     mMenuShowHideThunderbird = 0;
     mMenuIgnoreUnreads = 0;
+    mMenuClearIgnoredUnreads = 0;
     mThunderbirdProcess = nullptr;
 #ifdef Q_OS_WIN
     mThunderbirdUpdaterProcess = ProcessHandle::create("updater.exe");
@@ -501,7 +502,13 @@ void TrayIcon::actionActivate()
         if (settings->hideWhenStartedManually) {
             mThunderbirdWindowHide = true;
         }
-    } else if ( mWinTools->isHidden() ) {
+    } else if ( sender() == mMenuShowHideThunderbird ) {
+        if ( mWinTools->isHidden() ) {
+            showThunderbird();
+        } else {
+            hideThunderbird();
+        }
+    } else if ( mWinTools->isHidden() || !mWinTools->isActive() ) {
         showThunderbird();
     } else {
         hideThunderbird();
@@ -565,12 +572,98 @@ void TrayIcon::actionIgnoreEmails()
     setIgnoredUnreadMails(mUnreadCounter);
 }
 
+void TrayIcon::actionNewEvent() {
+    Settings* settings = BirdtrayApp::get()->getSettings();
+    QString executable;
+    QStringList args;
+
+    if ( !settings->getStartThunderbirdCmdline( executable, args ) )
+        return;
+
+    args << "-calendar";
+    QProcess::startDetached(executable, args);
+
+    if (!mWinTools)
+        return;
+
+    // Get window ID
+    unsigned long winId = mWinTools->getWindowId();
+    if (winId == 0) {
+        return;
+    }
+
+    // Give it a brief moment to switch tabs and focus, then send Ctrl+I.
+    QTimer::singleShot(300, this, [winId]() {
+#ifdef Q_OS_WIN
+        INPUT inputs[4] = {};
+        inputs[0].type = INPUT_KEYBOARD;
+        inputs[0].ki.wVk = VK_CONTROL;
+        inputs[1].type = INPUT_KEYBOARD;
+        inputs[1].ki.wVk = 'I';
+        inputs[2].type = INPUT_KEYBOARD;
+        inputs[2].ki.wVk = 'I';
+        inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+        inputs[3].type = INPUT_KEYBOARD;
+        inputs[3].ki.wVk = VK_CONTROL;
+        inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+        SendInput(4, inputs, sizeof(INPUT));
+#else
+        QString cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+i").arg(winId);
+        QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+#endif
+    });
+}
+
+void TrayIcon::actionNewTask() {
+    Settings* settings = BirdtrayApp::get()->getSettings();
+    QString executable;
+    QStringList args;
+
+    if ( !settings->getStartThunderbirdCmdline( executable, args ) )
+        return;
+
+    args << "-calendar";
+    QProcess::startDetached(executable, args);
+
+    if (!mWinTools)
+        return;
+
+    // Get window ID
+    unsigned long winId = mWinTools->getWindowId();
+    if (winId == 0) {
+        return;
+    }
+
+    // Give it a brief moment to switch tabs and focus, then send Ctrl+D.
+    QTimer::singleShot(300, this, [winId]() {
+#ifdef Q_OS_WIN
+        INPUT inputs[4] = {};
+        inputs[0].type = INPUT_KEYBOARD;
+        inputs[0].ki.wVk = VK_CONTROL;
+        inputs[1].type = INPUT_KEYBOARD;
+        inputs[1].ki.wVk = 'D';
+        inputs[2].type = INPUT_KEYBOARD;
+        inputs[2].ki.wVk = 'D';
+        inputs[2].ki.dwFlags = KEYEVENTF_KEYUP;
+        inputs[3].type = INPUT_KEYBOARD;
+        inputs[3].ki.wVk = VK_CONTROL;
+        inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
+        SendInput(4, inputs, sizeof(INPUT));
+#else
+        QString cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+d").arg(winId);
+        QProcess::startDetached("sh", QStringList() << "-c" << cmd);
+#endif
+    });
+}
+
+void TrayIcon::actionClearIgnoredEmails()
+{
+    setIgnoredUnreadMails(0);
+}
+
 void TrayIcon::actionSystrayIconActivated(QSystemTrayIcon::ActivationReason reason) {
-    if (reason == QSystemTrayIcon::Trigger) {
-        Settings* settings = BirdtrayApp::get()->getSettings();
-        if (settings->mShowHideThunderbird || (!mThunderbirdWindowExists && settings->startClosedThunderbird)) {
-            actionActivate();
-        }
+    if (reason == QSystemTrayIcon::Trigger || reason == QSystemTrayIcon::DoubleClick) {
+        actionActivate();
     }
 }
 
@@ -608,10 +701,14 @@ void TrayIcon::createMenu()
             mSystrayMenu->addMenu(newEmails);
         } else {
             // A single action
-            mSystrayMenu->addAction(tr("New Email Message"), this, SLOT(actionNewEmail()));
+            mSystrayMenu->addAction(tr("New Message"), this, SLOT(actionNewEmail()));
         }
         mSystrayMenu->addSeparator();
     }
+
+    mSystrayMenu->addAction( tr("New Event"), this, SLOT(actionNewEvent()) );
+    mSystrayMenu->addAction( tr("New Task"), this, SLOT(actionNewTask()) );
+    mSystrayMenu->addSeparator();
 
     // Snoozer times map, for easy editing. The first parameter is in seconds
     QMap< unsigned int, QString > snoozingTimes;
@@ -650,11 +747,17 @@ void TrayIcon::createMenu()
         mMenuIgnoreUnreads = new QAction( tr("Ignore unread emails"), this );
         connect( mMenuIgnoreUnreads, &QAction::triggered, this, &TrayIcon::actionIgnoreEmails );
         mSystrayMenu->addAction( mMenuIgnoreUnreads );
-        // Force an update of the ignore unread mails menu entry text.
+
+        mMenuClearIgnoredUnreads = new QAction( tr("Clear ignored unread emails"), this );
+        connect( mMenuClearIgnoredUnreads, &QAction::triggered, this, &TrayIcon::actionClearIgnoredEmails );
+        mSystrayMenu->addAction( mMenuClearIgnoredUnreads );
+
+        // Force an update of the ignore unread mails menu entry text and visibility.
         setIgnoredUnreadMails(ignoredUnreadEmails++, false);
     }
     else {
         mMenuIgnoreUnreads = nullptr;
+        mMenuClearIgnoredUnreads = nullptr;
     }
 
     mSystrayMenu->addSeparator();
@@ -822,6 +925,9 @@ void TrayIcon::setIgnoredUnreadMails(unsigned int ignoredMails, bool updateIcon)
         } else {
             mMenuIgnoreUnreads->setText(tr("Ignore unread emails"));
         }
+    }
+    if (mMenuClearIgnoredUnreads) {
+        mMenuClearIgnoredUnreads->setVisible(ignoredUnreadEmails > 0);
     }
     if (updateIcon) {
         this->updateIcon();

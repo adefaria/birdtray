@@ -736,7 +736,7 @@ Ujistěte se, že jste vybrali správný adresář profilů.</translation>
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nová emailová zpráva</translation>
+        <translation type="vanished">Nová emailová zpráva</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -809,6 +809,22 @@ Ujistěte se, že jste vybrali správný adresář profilů.</translation>
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Znovu se neptat</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

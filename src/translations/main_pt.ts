@@ -736,7 +736,7 @@ Por favor, certifique-se de ter selecionado a pasta de perfis correta.</translat
     </message>
     <message>
         <source>New Email Message</source>
-        <translation>Nova Mensagem de E-mail</translation>
+        <translation type="vanished">Nova Mensagem de E-mail</translation>
     </message>
     <message>
         <source>5 minutes</source>
@@ -809,6 +809,22 @@ Por favor, certifique-se de ter selecionado a pasta de perfis correta.</translat
     <message>
         <source>Don&apos;t ask again</source>
         <translation>Não perguntar novamente</translation>
+    </message>
+    <message>
+        <source>Clear ignored unread emails</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>New Task</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
