@@ -382,6 +382,13 @@ void TrayIcon::updateState()
             {
                 mThunderbirdWindowHide = false;
                 hideThunderbird();
+
+                // Restore opacity of the main window
+                unsigned long winId = mWinTools->getWindowId();
+                if (winId != 0) {
+                    QString restoreCmd = QString("sleep 0.1 && xprop -id %1 -remove _NET_WM_WINDOW_OPACITY").arg(winId);
+                    QProcess::startDetached("sh", QStringList() << "-c" << restoreCmd);
+                }
             }
         }
         else
@@ -843,7 +850,29 @@ void TrayIcon::startThunderbird()
     connect( mThunderbirdProcess, &QProcess::errorOccurred, this, &TrayIcon::tbProcessError );
 #endif
 
-    mThunderbirdProcess->start(executable, args);
+    Settings* settings = BirdtrayApp::get()->getSettings();
+    if (settings->mHideWhenStarted || settings->mHideWhenRestarted) {
+        QString startupCmd = QString(
+            "("
+            "  (for i in {1..150}; do "
+            "     for id in $(xdotool search --class thunderbird 2>/dev/null); do "
+            "       xprop -id $id -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 2>/dev/null || true; "
+            "     done; "
+            "     sleep 0.02; "
+            "   done; "
+            "   sleep 3; "
+            "   for id in $(xdotool search --class thunderbird 2>/dev/null); do "
+            "     xprop -id $id -remove _NET_WM_WINDOW_OPACITY 2>/dev/null || true; "
+            "   done"
+            "  ) &"
+            "  sleep 0.1;"
+            "  exec %1 %2"
+            ")"
+        ).arg(executable).arg(args.join(' '));
+        mThunderbirdProcess->start("sh", QStringList() << "-c" << startupCmd);
+    } else {
+        mThunderbirdProcess->start(executable, args);
+    }
 }
 
 void TrayIcon::tbProcessError(QProcess::ProcessError error)
