@@ -1,6 +1,7 @@
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QStandardPaths>
-#include <QtCore/QThread>
+#include <QSystemTrayIcon>
+#include <QThread>
 
 #include "birdtrayapp.h"
 #ifdef Q_OS_WIN
@@ -257,20 +258,5 @@ void BirdtrayApp::onSecondInstanceCommand(QLocalSocket* clientSocket) {
 }
 
 void BirdtrayApp::ensureSystemTrayAvailable() {
-    int passed = 0;
-    while (!QSystemTrayIcon::isSystemTrayAvailable()) {
-        if (passed == 0) {
-            qDebug("Waiting for system tray to become available");
-        }
-        passed++;
-        if (passed > 120) {
-            Log::fatal(tr("Sorry, the system tray cannot be controlled "
-                          "by this add-on on your operating system."));
-        }
-
-        // Let the Qt event loop recognize the tray appearing
-        QApplication::processEvents( QEventLoop::ExcludeUserInputEvents );
-
-        QThread::msleep(500);
-    }
+    return;
 }

@@ -86,7 +86,7 @@ OpenSSL potrebbe non essere installato.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Siamo spiacenti, la barra delle applicazioni non può essere controllata tramite questo componente aggiuntivo sul tuo sistema operativo.</translation>
+        <translation type="vanished">Siamo spiacenti, la barra delle applicazioni non può essere controllata tramite questo componente aggiuntivo sul tuo sistema operativo.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL potrebbe non essere installato.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Abilita il sottomenu Nuova e-mail</translation>
+        <translation type="vanished">Abilita il sottomenu Nuova e-mail</translation>
     </message>
     <message>
         <source>Advanced</source>

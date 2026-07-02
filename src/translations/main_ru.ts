@@ -86,7 +86,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Извините, системный трей нельзя контролировать с помощью этого дополнения в вашей операционной системе.</translation>
+        <translation type="vanished">Извините, системный трей нельзя контролировать с помощью этого дополнения в вашей операционной системе.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Включить подменю Новое письмо</translation>
+        <translation type="vanished">Включить подменю Новое письмо</translation>
     </message>
     <message>
         <source>Advanced</source>

@@ -81,10 +81,6 @@ OpenSSL might not be installed.</source>
         <source>file</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>DialogAddEditNewEmail</name>
@@ -272,10 +268,6 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>New Email</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable New Email submenu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

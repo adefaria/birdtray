@@ -86,7 +86,7 @@ OpenSSL yüklenmemiş olabilir.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Üzgünüz, sistem tepsisi işletim sisteminizdeki bu eklenti üzerinden kontrol edilemez.</translation>
+        <translation type="vanished">Üzgünüz, sistem tepsisi işletim sisteminizdeki bu eklenti üzerinden kontrol edilemez.</translation>
     </message>
 </context>
 <context>
@@ -276,7 +276,7 @@ tuşunu basılı tutarak tıklayın):</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Yeni E-posta alt menüsünü etkinleştir</translation>
+        <translation type="vanished">Yeni E-posta alt menüsünü etkinleştir</translation>
     </message>
     <message>
         <source>Advanced</source>

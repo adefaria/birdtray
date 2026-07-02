@@ -86,7 +86,7 @@ Möglicherweise ist OpenSSL nicht installiert.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Die Systemleiste kann leider auf Ihrem System nicht durch dieses Add-on gesteuert werden.</translation>
+        <translation type="vanished">Die Systemleiste kann leider auf Ihrem System nicht durch dieses Add-on gesteuert werden.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ Möglicherweise ist OpenSSL nicht installiert.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Das Untermenü &quot;Neue E-Mail&quot; aktivieren</translation>
+        <translation type="vanished">Das Untermenü &quot;Neue E-Mail&quot; aktivieren</translation>
     </message>
     <message>
         <source>Advanced</source>

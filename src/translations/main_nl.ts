@@ -86,7 +86,7 @@ Mogelijk is OpenSSL niet geïnstalleerd.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Het systeemvak van uw besturingssysteem kan niet worden beheerd middels deze add-on.</translation>
+        <translation type="vanished">Het systeemvak van uw besturingssysteem kan niet worden beheerd middels deze add-on.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ Mogelijk is OpenSSL niet geïnstalleerd.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Menu &apos;Nieuwe e-mail&apos; inschakelen</translation>
+        <translation type="vanished">Menu &apos;Nieuwe e-mail&apos; inschakelen</translation>
     </message>
     <message>
         <source>Advanced</source>

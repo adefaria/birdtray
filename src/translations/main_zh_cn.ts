@@ -86,7 +86,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>抱歉，您的操作系统不支持通过本程序控制系统托盘。</translation>
+        <translation type="vanished">抱歉，您的操作系统不支持通过本程序控制系统托盘。</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>启用“发件模板”托盘图标菜单</translation>
+        <translation type="vanished">启用“发件模板”托盘图标菜单</translation>
     </message>
     <message>
         <source>Advanced</source>

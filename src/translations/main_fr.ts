@@ -86,7 +86,7 @@ OpenSSL ne semble pas installé.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Désolé, cette extension ne peut pas contrôler la barre de notification sur ce système d&apos;exploitation.</translation>
+        <translation type="vanished">Désolé, cette extension ne peut pas contrôler la barre de notification sur ce système d&apos;exploitation.</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@ OpenSSL ne semble pas installé.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Activer le sous-menu des nouveaux mails</translation>
+        <translation type="vanished">Activer le sous-menu des nouveaux mails</translation>
     </message>
     <message>
         <source>Advanced</source>

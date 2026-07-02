@@ -551,6 +551,7 @@ void TrayIcon::actionUnsnooze()
 
 void TrayIcon::actionNewEmail() {
     Settings* settings = BirdtrayApp::get()->getSettings();
+    bool wasHidden = mWinTools && mWinTools->isHidden();
 
     QString executable;
     QStringList args;
@@ -571,7 +572,21 @@ void TrayIcon::actionNewEmail() {
         }
     }
 
+#ifndef Q_OS_WIN
+    QStringList envArgs;
+    QByteArray origDbus = qgetenv("ORIG_DBUS_SESSION_BUS_ADDRESS");
+    if (!origDbus.isEmpty()) {
+        envArgs << QString("DBUS_SESSION_BUS_ADDRESS=%1").arg(QString::fromUtf8(origDbus));
+    }
+    envArgs << executable << args;
+    QProcess::startDetached("env", envArgs);
+#else
     QProcess::startDetached(executable, args);
+#endif
+
+    if (wasHidden) {
+        mThunderbirdWindowHide = true;
+    }
 }
 
 void TrayIcon::actionIgnoreEmails()
@@ -726,27 +741,24 @@ void TrayIcon::createMenu()
     mSystrayMenu->addSeparator();
 
     // New email could be either a single action, or menu depending on settings
-    if (settings->mNewEmailMenuEnabled) {
-        if (!settings->mNewEmailData.isEmpty()) {
-            // A submenu
-            auto* newEmails = new QMenu(tr("New Email"));
-            auto* action = new QAction(tr("Blank"), this);
+    if (!settings->mNewEmailData.isEmpty()) {
+        // A submenu
+        auto* newEmails = new QMenu(tr("New Email"));
+        auto* action = new QAction(tr("Blank"), this);
+        connect(action, &QAction::triggered, this, &TrayIcon::actionNewEmail);
+        newEmails->addAction(action);
+        newEmails->addSeparator();
+        for (int index = 0; index < settings->mNewEmailData.size(); index++) {
+            action = new QAction(settings->mNewEmailData[index].menuentry(), this);
             connect(action, &QAction::triggered, this, &TrayIcon::actionNewEmail);
+            // Remember the delay in the action itself
+            action->setData(index);
             newEmails->addAction(action);
-            newEmails->addSeparator();
-            for (int index = 0; index < settings->mNewEmailData.size(); index++) {
-                action = new QAction(settings->mNewEmailData[index].menuentry(), this);
-                connect(action, &QAction::triggered, this, &TrayIcon::actionNewEmail);
-                // Remember the delay in the action itself
-                action->setData(index);
-                newEmails->addAction(action);
-            }
-            mSystrayMenu->addMenu(newEmails);
-        } else {
-            // A single action
-            mSystrayMenu->addAction(tr("New Message"), this, SLOT(actionNewEmail()));
         }
-        mSystrayMenu->addSeparator();
+        mSystrayMenu->addMenu(newEmails);
+    } else {
+        // A single action
+        mSystrayMenu->addAction(tr("New Message"), this, SLOT(actionNewEmail()));
     }
 
     mSystrayMenu->addAction( tr("New Event"), this, SLOT(actionNewEvent()) );
@@ -844,6 +856,16 @@ void TrayIcon::startThunderbird()
     Log::debug("Starting Thunderbird as '%s %s'", qPrintable(executable), qPrintable(args.join(' ')));
 
     mThunderbirdProcess = new QProcess();
+#ifndef Q_OS_WIN
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QByteArray origDbus = qgetenv("ORIG_DBUS_SESSION_BUS_ADDRESS");
+    if (!origDbus.isEmpty()) {
+        env.insert("DBUS_SESSION_BUS_ADDRESS", origDbus);
+    } else {
+        env.remove("DBUS_SESSION_BUS_ADDRESS");
+    }
+    mThunderbirdProcess->setProcessEnvironment(env);
+#endif
     connect( mThunderbirdProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(tbProcessFinished(int,QProcess::ExitStatus)) );
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)

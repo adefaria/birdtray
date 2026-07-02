@@ -86,7 +86,7 @@ OpenSSL może nie być zainstalowane.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Niestety, tacka systemowa nie może być kontrolowana przez to rozszerzenie w tym systemie operacyjnym.</translation>
+        <translation type="vanished">Niestety, tacka systemowa nie może być kontrolowana przez to rozszerzenie w tym systemie operacyjnym.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL może nie być zainstalowane.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Włącz podmenu nowych wiadomości</translation>
+        <translation type="vanished">Włącz podmenu nowych wiadomości</translation>
     </message>
     <message>
         <source>Advanced</source>

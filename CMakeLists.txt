@@ -12,9 +12,10 @@ find_package(Qt6Core CONFIG REQUIRED)
 find_package(Qt6Gui CONFIG REQUIRED)
 find_package(Qt6Widgets CONFIG REQUIRED)
 find_package(Qt6Network CONFIG REQUIRED)
+find_package(Qt6DBus CONFIG REQUIRED)
 find_package(Qt6Svg CONFIG REQUIRED)
 find_package(Qt6LinguistTools CONFIG QUIET)
-set(REQUIRED_MODULES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Svg)
+set(REQUIRED_MODULES Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Svg Qt6::DBus)
 
 set(PLATFORM_SOURCES)
 set(PLATFORM_HEADERS)
@@ -168,11 +169,13 @@ add_library(birdtray_lib STATIC
         ${HEADERS} ${PLATFORM_HEADERS})
 target_include_directories(birdtray_lib PUBLIC src)
 target_link_libraries(birdtray_lib PUBLIC ${REQUIRED_MODULES})
+# Ensure DBus symbols are available for static linking
+target_link_libraries(birdtray_lib PUBLIC Qt6::DBus)
 
 add_executable(birdtray
         ${EXECUTABLE_OPTIONS} src/main.cpp ${PLATFORM_EXE_SOURCES} ${RESOURCES_SOURCES}
         ${HEADERS} ${PLATFORM_HEADERS})
-target_link_libraries(birdtray birdtray_lib)
+target_link_libraries(birdtray PRIVATE birdtray_lib Qt6::DBus)
 
 if(MSVC)
     target_compile_options(birdtray_lib PUBLIC /utf-8)

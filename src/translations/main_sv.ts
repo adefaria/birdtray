@@ -86,7 +86,7 @@ OpenSSL kanske inte är installerad.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Systemfältet kan tyvärr inte kontrolleras genom detta tillägg, i ditt operativsystem.</translation>
+        <translation type="vanished">Systemfältet kan tyvärr inte kontrolleras genom detta tillägg, i ditt operativsystem.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL kanske inte är installerad.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Aktivera undermeny till Ny e-post</translation>
+        <translation type="vanished">Aktivera undermeny till Ny e-post</translation>
     </message>
     <message>
         <source>Advanced</source>

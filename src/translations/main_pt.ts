@@ -86,7 +86,7 @@ OpenSSL não deve estar instalado.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Desculpe, a área de notificação do sistema não pode ser controlada através desta extensão em seu sistema operacional.</translation>
+        <translation type="vanished">Desculpe, a área de notificação do sistema não pode ser controlada através desta extensão em seu sistema operacional.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL não deve estar instalado.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Habilitar submenu de Nova Mensagem</translation>
+        <translation type="vanished">Habilitar submenu de Nova Mensagem</translation>
     </message>
     <message>
         <source>Advanced</source>

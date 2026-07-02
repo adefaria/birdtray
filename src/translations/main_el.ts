@@ -86,7 +86,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Λυπάμαι, αυτή η επέκταση δεν υποστηρίζει τον έλεγχο του πλαισίου συστήματος σε αυτό το λειτουργικό σύστημα.</translation>
+        <translation type="vanished">Λυπάμαι, αυτή η επέκταση δεν υποστηρίζει τον έλεγχο του πλαισίου συστήματος σε αυτό το λειτουργικό σύστημα.</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@ OpenSSL might not be installed.</source>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Ενεργοποίηση του υπομενού νέας αλληλογραφίας</translation>
+        <translation type="vanished">Ενεργοποίηση του υπομενού νέας αλληλογραφίας</translation>
     </message>
     <message>
         <source>Advanced</source>

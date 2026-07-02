@@ -86,7 +86,7 @@ OpenSSL podría no estar instalado.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Lo sentimos, la bandeja del sistema no puede ser controlado a través de este complemento en su sistema operativo.</translation>
+        <translation type="vanished">Lo sentimos, la bandeja del sistema no puede ser controlado a través de este complemento en su sistema operativo.</translation>
     </message>
 </context>
 <context>
@@ -275,7 +275,7 @@ OpenSSL podría no estar instalado.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Habilitar submenú de nuevo correo</translation>
+        <translation type="vanished">Habilitar submenú de nuevo correo</translation>
     </message>
     <message>
         <source>Advanced</source>

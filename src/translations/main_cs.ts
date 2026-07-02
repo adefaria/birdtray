@@ -86,7 +86,7 @@ OpenSSL možná není nainstalován.</translation>
     </message>
     <message>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
-        <translation>Litujeme, tento doplněk ve vašem operačním systému nemůže ovládat systémovou lištu.</translation>
+        <translation type="vanished">Litujeme, tento doplněk ve vašem operačním systému nemůže ovládat systémovou lištu.</translation>
     </message>
 </context>
 <context>
@@ -279,7 +279,7 @@ OpenSSL možná není nainstalován.</translation>
     </message>
     <message>
         <source>Enable New Email submenu</source>
-        <translation>Aktivovat podnabídku Nový e-mail</translation>
+        <translation type="vanished">Aktivovat podnabídku Nový e-mail</translation>
     </message>
     <message>
         <source>Advanced</source>

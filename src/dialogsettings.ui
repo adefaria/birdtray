@@ -637,18 +637,11 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <widget class="QCheckBox" name="boxEnableNewEmail">
-         <property name="text">
-          <string>Enable New Email submenu</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_7">
          <item>
           <widget class="QTreeView" name="treeNewEmails">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="rootIsDecorated">
             <bool>false</bool>
@@ -679,7 +672,7 @@
            <item>
             <widget class="QPushButton" name="btnNewEmailAdd">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Add</string>
@@ -689,7 +682,7 @@
            <item>
             <widget class="QPushButton" name="btnNewEmailEdit">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Edit</string>
@@ -699,7 +692,7 @@
            <item>
             <widget class="QPushButton" name="btnNewEmailDelete">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Remove</string>
@@ -1275,7 +1268,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>boxHideWindowAtRestart</tabstop>
   <tabstop>boxStartThunderbirdOnTrayIconClick</tabstop>
   <tabstop>boxHideWindowAfterManualStart</tabstop>
-  <tabstop>boxEnableNewEmail</tabstop>
   <tabstop>treeNewEmails</tabstop>
   <tabstop>btnNewEmailAdd</tabstop>
   <tabstop>btnNewEmailEdit</tabstop>
@@ -1329,70 +1321,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>322</x>
      <y>227</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>boxEnableNewEmail</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>treeNewEmails</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>119</x>
-     <y>81</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>boxEnableNewEmail</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnNewEmailAdd</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>687</x>
-     <y>203</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>boxEnableNewEmail</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnNewEmailEdit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>687</x>
-     <y>233</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>boxEnableNewEmail</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>btnNewEmailDelete</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>101</x>
-     <y>45</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>687</x>
-     <y>263</y>
     </hint>
    </hints>
   </connection>

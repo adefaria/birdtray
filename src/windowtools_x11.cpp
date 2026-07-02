@@ -405,6 +405,7 @@ bool WindowTools_X11::show()
     }
 
     XMapRaised( display, mWinId );
+    XRaiseWindow( display, mWinId );
     XFlush( display );
 
     // Make it the active window
@@ -445,7 +446,13 @@ bool WindowTools_X11::hide()
 
 bool WindowTools_X11::isHidden()
 {
-    return mHiddenStateCounter == 2 && mWinId != activeWindow( x11_display() );
+    if (mWinId == None || x11_display() == nullptr)
+        return true;
+    XWindowAttributes attrib;
+    if (XGetWindowAttributes(x11_display(), mWinId, &attrib) != 0) {
+        return attrib.map_state != IsViewable;
+    }
+    return true;
 }
 
 bool WindowTools_X11::isActive()

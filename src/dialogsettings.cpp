@@ -82,7 +82,6 @@ DialogSettings::DialogSettings( QWidget *parent)
     boxHideWindowAtRestart->setChecked( settings->mHideWhenRestarted );
     boxStartThunderbirdOnTrayIconClick->setChecked( settings->startClosedThunderbird );
     boxHideWindowAfterManualStart->setChecked( settings->hideWhenStartedManually );
-    boxEnableNewEmail->setChecked( settings->mNewEmailMenuEnabled );
     boxBlinkingUsesAlpha->setChecked( settings->mBlinkingUseAlphaTransition );
     checkUpdateOnStartup->setChecked( settings->mUpdateOnStartup );
     boxAllowSuppression->setChecked( settings->mAllowSuppressingUnreads );
@@ -138,6 +137,16 @@ DialogSettings::DialogSettings( QWidget *parent)
     origabout.replace( "[VERSION]", Utils::getBirdtrayVersion() );
     origabout.replace( "[DATE]", QString("%1 %2").arg(__DATE__) .arg(__TIME__) );
     origabout.replace( "[QT_VERSION]", QT_VERSION_STR );
+    // Style the about box text to be 12 point
+    origabout.replace( "font-size:8pt", "font-size:12pt" );
+    origabout.replace( "font-size: 8pt", "font-size: 12pt" );
+    origabout.replace( "font-size:11pt", "font-size:12pt" );
+    origabout.replace( "font-size: 11pt", "font-size: 12pt" );
+
+    // Format the copyright and MATE support attribution into two lines with proper links
+    origabout.replace( "Copyright (C) 2018 by George Yunaev, ", "Copyright (C) 2018 by George Yunaev &lt;" );
+    origabout.replace( "gyunaev@ulduzsoft.com</a>", "gyunaev@ulduzsoft.com</a>&gt;<br/>MATE support by <a href=\"https://defaria.com\" style=\"text-decoration: underline; color:#2980b9;\">Andrew DeFaria</a> &lt;<a href=\"mailto:Andrew@DeFaria.com\" style=\"text-decoration: underline; color:#2980b9;\">Andrew@DeFaria.com</a>&gt;" );
+    origabout.replace( "gyunaev@ulduzsoft.com</span></a>", "gyunaev@ulduzsoft.com</span></a>&gt;<br/>MATE support by <a href=\"https://defaria.com\" style=\"text-decoration: underline; color:#2980b9;\">Andrew DeFaria</a> &lt;<a href=\"mailto:Andrew@DeFaria.com\" style=\"text-decoration: underline; color:#2980b9;\">Andrew@DeFaria.com</a>&gt;" );
     browserAbout->setText( origabout );
 
     // Icon
@@ -199,7 +208,6 @@ void DialogSettings::accept()
     settings->mHideWhenRestarted = boxHideWindowAtRestart->isChecked();
     settings->startClosedThunderbird = boxStartThunderbirdOnTrayIconClick->isChecked();
     settings->hideWhenStartedManually = boxHideWindowAfterManualStart->isChecked();
-    settings->mNewEmailMenuEnabled = boxEnableNewEmail->isChecked();
     settings->mBlinkingUseAlphaTransition = boxBlinkingUsesAlpha->isChecked();
     settings->mUpdateOnStartup = checkUpdateOnStartup->isChecked();
     settings->mUnreadOpacityLevel = (double) spinUnreadOpacityLevel->value() / 100.0;
