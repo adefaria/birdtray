@@ -88,6 +88,10 @@ Mogelijk is OpenSSL niet geïnstalleerd.</translation>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
         <translation type="vanished">Het systeemvak van uw besturingssysteem kan niet worden beheerd middels deze add-on.</translation>
     </message>
+    <message>
+        <source>Run Birdtray as a daemon in the background.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogAddEditNewEmail</name>

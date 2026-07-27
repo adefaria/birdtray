@@ -81,6 +81,10 @@ OpenSSL might not be installed.</source>
         <source>file</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Run Birdtray as a daemon in the background.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogAddEditNewEmail</name>

@@ -38,6 +38,7 @@ TrayIcon::TrayIcon(bool showSettings)
     mThunderbirdWindowExists = false;
     mThunderbirdWindowExisted = false;
     mThunderbirdWindowHide = false;
+    mLastIconSize = QSize(0, 0);
     connect(QApplication::instance(), &QApplication::aboutToQuit, this, &TrayIcon::onQuit);
 
     Settings* settings = BirdtrayApp::get()->getSettings();
@@ -217,7 +218,31 @@ void TrayIcon::updateIcon()
         return;
     }
 
-    QPixmap temp(settings->getNotificationIcon().size());
+    QSize targetSize = settings->getNotificationIcon().size();
+    QRect trayGeom = this->geometry();
+    Log::debug("updateIcon: geometry is valid=%d, rect=(%d, %d, %d x %d)", trayGeom.isValid(), trayGeom.x(), trayGeom.y(), trayGeom.width(), trayGeom.height());
+    
+    const auto widgets = QApplication::topLevelWidgets();
+    for (QWidget *w : widgets) {
+        if (w->inherits("QSystemTrayIconSys")) {
+            int h = w->height();
+            if (h > 0 && w->width() != h) {
+                Log::debug("Resizing QSystemTrayIconSys from %d x %d to %d x %d", w->width(), w->height(), h, h);
+                w->setFixedSize(h, h);
+                trayGeom = w->geometry();
+            }
+        }
+    }
+
+    if (trayGeom.isValid() && trayGeom.width() > 0 && trayGeom.height() > 0) {
+        int sz = std::min(trayGeom.width(), trayGeom.height());
+        if (sz > 0) {
+            targetSize = QSize(sz, sz);
+        }
+    }
+    mLastIconSize = targetSize;
+
+    QPixmap temp(targetSize);
     QPainter p;
 
     temp.fill( Qt::transparent );
@@ -233,10 +258,17 @@ void TrayIcon::updateIcon()
     else
         p.setOpacity( mBlinkingIconOpacity );
 
+    double marginFactor = 0.12; // 12% margin on each side to match other tray icons
+    int margin = static_cast<int>(temp.width() * marginFactor);
+    if (margin < 2 && temp.width() >= 24) {
+        margin = 2;
+    }
+    QRect iconRect = temp.rect().adjusted(margin, margin, -margin, -margin);
+
     if (unread != 0 && !settings->mNotificationIconUnread.isNull()) {
-        p.drawPixmap(settings->mNotificationIconUnread.rect(), settings->mNotificationIconUnread);
+        p.drawPixmap(iconRect, settings->mNotificationIconUnread);
     } else {
-        p.drawPixmap(settings->getNotificationIcon().rect(), settings->getNotificationIcon());
+        p.drawPixmap(iconRect, settings->getNotificationIcon());
     }
 
     p.setFont(settings->mNotificationFont);
@@ -363,6 +395,19 @@ void TrayIcon::enableBlinking(bool enabled)
 
 void TrayIcon::updateState()
 {
+    Settings* settings = BirdtrayApp::get()->getSettings();
+    QSize currentSize = settings->getNotificationIcon().size();
+    QRect trayGeom = this->geometry();
+    if (trayGeom.isValid() && trayGeom.width() > 0 && trayGeom.height() > 0) {
+        int sz = std::min(trayGeom.width(), trayGeom.height());
+        if (sz > 0) {
+            currentSize = QSize(sz, sz);
+        }
+    }
+    if (currentSize != mLastIconSize) {
+        updateIcon();
+    }
+
     if ( !mSnoozedUntil.isNull() && mSnoozedUntil < QDateTime::currentDateTimeUtc() )
     {
         // We are unsnoozed now

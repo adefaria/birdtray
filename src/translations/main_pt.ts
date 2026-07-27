@@ -88,6 +88,10 @@ OpenSSL não deve estar instalado.</translation>
         <source>Sorry, the system tray cannot be controlled by this add-on on your operating system.</source>
         <translation type="vanished">Desculpe, a área de notificação do sistema não pode ser controlada através desta extensão em seu sistema operacional.</translation>
     </message>
+    <message>
+        <source>Run Birdtray as a daemon in the background.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DialogAddEditNewEmail</name>

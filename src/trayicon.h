@@ -208,6 +208,7 @@ class TrayIcon : public QSystemTrayIcon
 
         // Cached last drawn icon
         QImage          mLastDrawnIcon;
+        QSize           mLastIconSize;
 
         // Thunderbird process which we have started. This can be nullptr if Thunderbird
         // was started before Birdtray (thus our process would just activate it and exit)
