@@ -827,12 +827,54 @@ int MorkParser::dumpMorkFile( const QString& filename )
 }
 
 unsigned int MailMorkParser::getNumUnreadMessages() {
-    const int scopeId = this->columns_.key(MorkDbFolderInfoScope);
-    if (!scopeId) {
-        Log::debug("Mork table %s not found", MorkDbFolderInfoScope);
+    const int threadsScopeId = this->columns_.key("ns:msg:db:row:scope:threads:all");
+    const int msgsScopeId = this->columns_.key("ns:msg:db:row:scope:msgs:all");
+
+    bool isVirtual = true;
+    if (threadsScopeId && this->mork_.contains(threadsScopeId) && !this->mork_[threadsScopeId].isEmpty()) {
+        isVirtual = false;
+    }
+    if (msgsScopeId && this->mork_.contains(msgsScopeId) && !this->mork_[msgsScopeId].isEmpty()) {
+        isVirtual = false;
+    }
+
+    if (!isVirtual) {
+        const int unreadColId = this->columns_.key("unreadChildren");
+        if (!unreadColId) {
+            return 0;
+        }
+
+        unsigned int unreadCount = 0;
+
+        for (TableScopeMap::const_iterator scopeIt = this->mork_.begin(); scopeIt != this->mork_.end(); scopeIt++) {
+            if (scopeIt.key() == threadsScopeId || scopeIt.key() == 0x80) {
+                const MorkTableMap& tables = scopeIt.value();
+                for (MorkTableMap::const_iterator tabIt = tables.begin(); tabIt != tables.end(); tabIt++) {
+                    const RowScopeMap& rowScopes = tabIt.value();
+                    for (RowScopeMap::const_iterator rowScopeIt = rowScopes.begin(); rowScopeIt != rowScopes.end(); rowScopeIt++) {
+                        const MorkRowMap& rows = rowScopeIt.value();
+                        for (MorkRowMap::const_iterator rit = rows.begin(); rit != rows.end(); rit++) {
+                            MorkCells cells = rit.value();
+                            if (cells.contains(unreadColId)) {
+                                bool correct;
+                                unsigned int value = getValue(cells[unreadColId]).toUInt(&correct, 16);
+                                if (correct) {
+                                    unreadCount += value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return unreadCount;
+    }
+
+    const int infoScopeId = this->columns_.key(MorkDbFolderInfoScope);
+    if (!infoScopeId) {
         return 0;
     }
-    const MorkRowMap* rows = this->rows(scopeId, 1, scopeId);
+    const MorkRowMap* rows = this->rows(infoScopeId, 1, infoScopeId);
     if (rows) {
         for (MorkRowMap::const_iterator rit = rows->begin(); rit != rows->cend(); rit++) {
             MorkCells cells = rit.value();
@@ -842,14 +884,12 @@ unsigned int MailMorkParser::getNumUnreadMessages() {
                     bool correct;
                     unsigned int value = getValue(cells[colId]).toInt(&correct, 16);
                     if (correct) {
-                        return static_cast<int>(value);
-                    } else {
-                        Log::debug("Incorrect Mork value: %s",
-                                qPrintable(getValue(cells[colId])));
+                        return value;
                     }
                 }
             }
         }
     }
+
     return 0;
 }

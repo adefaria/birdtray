@@ -188,3 +188,8 @@ void CALLBACK WindowTools_Win::minimizeCallback(
         winTools->hide();
     }
 }
+
+bool WindowTools_Win::triggerKey(const QString& key) {
+    Q_UNUSED(key);
+    return false;
+}

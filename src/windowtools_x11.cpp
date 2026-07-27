@@ -5,6 +5,8 @@
 #include "windowtools_x11.h"
 #include "utils.h"
 #include "log.h"
+#include <X11/keysym.h>
+#include <X11/extensions/XTest.h>
 
 /*
  * This code is mostly taken from xlibutil.cpp KDocker project, licensed under GPLv2 or higher.
@@ -359,6 +361,7 @@ WindowTools_X11::WindowTools_X11()
 {  
     mWinId = None;
     mHiddenStateCounter = 0;
+    mThunderbirdWasActive = false;
 
     connect( &mWindowStateTimer, &QTimer::timeout, this, &WindowTools_X11::timerWindowState );
     mWindowStateTimer.setInterval( 250 );
@@ -457,7 +460,14 @@ bool WindowTools_X11::isHidden()
 
 bool WindowTools_X11::isActive()
 {
-    return mWinId != None && mWinId == activeWindow( x11_display() );
+    if (mWinId == None || x11_display() == nullptr)
+        return false;
+    Window active = activeWindow(x11_display());
+    if (mWinId == active)
+        return true;
+    if (isDockWindow(x11_display(), active))
+        return mThunderbirdWasActive;
+    return false;
 }
 
 unsigned long WindowTools_X11::getWindowId() const
@@ -516,8 +526,46 @@ void WindowTools_X11::doHide()
     }
 }
 
+bool WindowTools_X11::isDockWindow(Display *display, Window w)
+{
+    if (w == None || display == nullptr)
+        return false;
+
+    static Atom windowType = XInternAtom(display, "_NET_WM_WINDOW_TYPE", false);
+    static Atom dockWindow = XInternAtom(display, "_NET_WM_WINDOW_TYPE_DOCK", false);
+
+    Atom type = None;
+    int format;
+    unsigned long nitems, after;
+    Atom *data = NULL;
+
+    int ret = XGetWindowProperty(display, w, windowType, 0, 10, false, AnyPropertyType, &type, &format, &nitems, &after, (unsigned char**) &data);
+    if (ret == Success && data) {
+        unsigned int i;
+        for (i = 0; i < nitems; i++) {
+            if (data[i] == dockWindow) {
+                break;
+            }
+        }
+        XFree(data);
+        return (i < nitems);
+    }
+    return false;
+}
+
 void WindowTools_X11::timerWindowState()
 {
+    // Update active window tracking
+    Display *display = x11_display();
+    if (display && mWinId != None) {
+        Window active = activeWindow(display);
+        if (active == mWinId) {
+            mThunderbirdWasActive = true;
+        } else if (!isDockWindow(display, active)) {
+            mThunderbirdWasActive = false;
+        }
+    }
+
     if (mWinId == None || !BirdtrayApp::get()->getSettings()->mHideWhenMinimized) {
         return;
     }
@@ -563,3 +611,94 @@ bool WindowTools_X11::checkWindow()
 
     return true;
 }
+
+#include <QThread>
+
+bool WindowTools_X11::triggerKey(const QString& key)
+{
+    if ( !checkWindow() ) {
+        Log::debug("triggerKey failed: checkWindow failed");
+        return false;
+    }
+
+    Display *display = x11_display();
+    Window root = x11_appRootWindow();
+    if (!display) {
+        Log::debug("triggerKey failed: x11_display is null");
+        return false;
+    }
+
+    bool wasHidden = isHidden();
+    Atom opacityAtom = XInternAtom(display, "_NET_WM_WINDOW_OPACITY", False);
+
+    Log::debug("triggerKey starting: key=%s, wasHidden=%d, winId=0x%lX", qPrintable(key), wasHidden, mWinId);
+
+    if (wasHidden) {
+        unsigned long opacity = 0;
+        XChangeProperty(display, mWinId, opacityAtom, XA_CARDINAL, 32, PropModeReplace, (unsigned char*)&opacity, 1);
+
+        XMapWindow(display, mWinId);
+        mSizeHint.flags = USPosition;
+        XSetWMNormalHints(display, mWinId, &mSizeHint);
+        XMapRaised(display, mWinId);
+        XRaiseWindow(display, mWinId);
+        XFlush(display);
+
+        QThread::msleep(200); // Give WM time to map
+    }
+
+    long l_active[2] = {2, CurrentTime};
+    sendMessage(display, root, mWinId, "_NET_ACTIVE_WINDOW", 32, SubstructureNotifyMask | SubstructureRedirectMask, l_active, sizeof(l_active));
+    XSetInputFocus(display, mWinId, RevertToParent, CurrentTime);
+    XFlush(display);
+
+    QThread::msleep(200); // Give WM time to focus
+
+    KeyCode ctrlCode = XKeysymToKeycode(display, XK_Control_L);
+    KeyCode shiftCode = XKeysymToKeycode(display, XK_Shift_L);
+    KeyCode keycode = 0;
+
+    bool useCtrl = false;
+    bool useShift = false;
+
+    QStringList parts = key.toLower().split('+');
+    for (const QString& part : parts) {
+        if (part == "ctrl" || part == "control") {
+            useCtrl = true;
+        } else if (part == "shift") {
+            useShift = true;
+        } else if (part.length() == 1) {
+            keycode = XKeysymToKeycode(display, part.at(0).toLatin1());
+        }
+    }
+
+    Log::debug("triggerKey keycodes: ctrlCode=%d, shiftCode=%d, keycode=%d, useCtrl=%d, useShift=%d",
+               ctrlCode, shiftCode, keycode, useCtrl, useShift);
+
+    if (keycode != 0) {
+        if (useCtrl) XTestFakeKeyEvent(display, ctrlCode, True, CurrentTime);
+        if (useShift) XTestFakeKeyEvent(display, shiftCode, True, CurrentTime);
+        XTestFakeKeyEvent(display, keycode, True, CurrentTime);
+        XFlush(display);
+
+        QThread::msleep(50); // Small press delay
+
+        XTestFakeKeyEvent(display, keycode, False, CurrentTime);
+        if (useShift) XTestFakeKeyEvent(display, shiftCode, False, CurrentTime);
+        if (useCtrl) XTestFakeKeyEvent(display, ctrlCode, False, CurrentTime);
+        XFlush(display);
+    }
+
+    if (wasHidden) {
+        QThread::msleep(500); // Give time for new dialog to open
+        XUnmapWindow(display, mWinId);
+        XDeleteProperty(display, mWinId, opacityAtom);
+        XFlush(display);
+        
+        mHiddenStateCounter = 2;
+        emit onWindowHidden();
+    }
+
+    return true;
+}
+

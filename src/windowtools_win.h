@@ -65,6 +65,8 @@ public:
      */
     bool isValid() override;
 
+    bool triggerKey(const QString& key) override;
+
 private:
     /**
      * Ensure that the Thunderbird window is still valid or refresh it otherwise.

@@ -44,6 +44,8 @@ class WindowTools_X11 : public WindowTools
         // Return true if Thunderbird window is valid (hidden or shown)
         virtual bool    isValid();
 
+        virtual bool    triggerKey(const QString& key) override;
+
     private slots:
         void    doHide();
         void    timerWindowState();
@@ -54,6 +56,8 @@ class WindowTools_X11 : public WindowTools
 
         // Makes sure our window ID is still valid, or reinitializes it
         bool    checkWindow();
+
+        bool    isDockWindow(Display *display, Window w);
 
         // Our Window ID
         Window      mWinId;
@@ -66,6 +70,8 @@ class WindowTools_X11 : public WindowTools
 
         // State check timer
         QTimer      mWindowStateTimer;
+
+        bool        mThunderbirdWasActive;
 };
 
 #endif // WINDOWTOOLS_X11_H

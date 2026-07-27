@@ -58,6 +58,9 @@ TrayIcon::TrayIcon(bool showSettings)
     connect( &mStateTimer, &QTimer::timeout, this, &TrayIcon::updateState );
     mStateTimer.setInterval( 1000 );
     mStateTimer.start();
+
+    connect( &mStartupHideTimer, &QTimer::timeout, this, &TrayIcon::onStartupHideTimer );
+    mStartupHideTimer.setInterval( 20 );
     
     // Update the state and icon when everything is settled
     updateState();
@@ -195,8 +198,11 @@ void TrayIcon::updateIcon()
     }
     else
     {
-        // Subtract the ignored unread mails
-        unread -= ignoredUnreadEmails;
+        if ( unread > ignoredUnreadEmails ) {
+            unread -= ignoredUnreadEmails;
+        } else {
+            unread = 0;
+        }
 
         // Are we blinking, and if not, should we be?
         if (unread > 0 && settings->mBlinkSpeed > 0 && mBlinkingTimeout == 0) {
@@ -515,7 +521,7 @@ void TrayIcon::actionActivate()
         } else {
             hideThunderbird();
         }
-    } else if ( mWinTools->isHidden() || !mWinTools->isActive() ) {
+    } else if ( mWinTools->isHidden() ) {
         showThunderbird();
     } else {
         hideThunderbird();
@@ -620,37 +626,7 @@ void TrayIcon::actionNewEvent() {
     inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(4, inputs, sizeof(INPUT));
 #else
-    QString cmd;
-    if (wasHidden) {
-        cmd = QString(
-            "xprop -id %1 -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 && "
-            "sleep 0.1 && "
-            "xdotool windowmap %1 && "
-            "sleep 0.1 && "
-            "wmctrl -i -a %1 && "
-            "sleep 0.1 && "
-            "initial_count=$(xdotool search --class thunderbird | wc -l) && "
-            "xdotool key ctrl+i && "
-            "for i in {1..20}; do "
-            "  current_count=$(xdotool search --class thunderbird | wc -l); "
-            "  if [ \"$current_count\" -gt \"$initial_count\" ]; then break; fi; "
-            "  sleep 0.1; "
-            "done && "
-            "sleep 0.2 && "
-            "xdotool windowunmap %1 && "
-            "sleep 0.1 && "
-            "xprop -id %1 -remove _NET_WM_WINDOW_OPACITY"
-        ).arg(winId);
-    } else {
-        cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+i").arg(winId);
-    }
-    QProcess::startDetached("sh", QStringList() << "-c" << cmd);
-    if (wasHidden) {
-        QTimer::singleShot(2500, this, [this]() {
-            mThunderbirdWindowHide = true;
-            onThunderbirdWindowHidden();
-        });
-    }
+    mWinTools->triggerKey("ctrl+i");
 #endif
 }
 
@@ -680,37 +656,7 @@ void TrayIcon::actionNewTask() {
     inputs[3].ki.dwFlags = KEYEVENTF_KEYUP;
     SendInput(4, inputs, sizeof(INPUT));
 #else
-    QString cmd;
-    if (wasHidden) {
-        cmd = QString(
-            "xprop -id %1 -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 && "
-            "sleep 0.1 && "
-            "xdotool windowmap %1 && "
-            "sleep 0.1 && "
-            "wmctrl -i -a %1 && "
-            "sleep 0.1 && "
-            "initial_count=$(xdotool search --class thunderbird | wc -l) && "
-            "xdotool key ctrl+d && "
-            "for i in {1..20}; do "
-            "  current_count=$(xdotool search --class thunderbird | wc -l); "
-            "  if [ \"$current_count\" -gt \"$initial_count\" ]; then break; fi; "
-            "  sleep 0.1; "
-            "done && "
-            "sleep 0.2 && "
-            "xdotool windowunmap %1 && "
-            "sleep 0.1 && "
-            "xprop -id %1 -remove _NET_WM_WINDOW_OPACITY"
-        ).arg(winId);
-    } else {
-        cmd = QString("wmctrl -i -a %1 && sleep 0.1 && xdotool key ctrl+d").arg(winId);
-    }
-    QProcess::startDetached("sh", QStringList() << "-c" << cmd);
-    if (wasHidden) {
-        QTimer::singleShot(2500, this, [this]() {
-            mThunderbirdWindowHide = true;
-            onThunderbirdWindowHidden();
-        });
-    }
+    mWinTools->triggerKey("ctrl+d");
 #endif
 }
 
@@ -872,28 +818,23 @@ void TrayIcon::startThunderbird()
     connect( mThunderbirdProcess, &QProcess::errorOccurred, this, &TrayIcon::tbProcessError );
 #endif
 
+    mThunderbirdProcess->start(executable, args);
     Settings* settings = BirdtrayApp::get()->getSettings();
     if (settings->mHideWhenStarted || settings->mHideWhenRestarted) {
-        QString startupCmd = QString(
-            "("
-            "  (for i in {1..150}; do "
-            "     for id in $(xdotool search --class thunderbird 2>/dev/null); do "
-            "       xprop -id $id -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0 2>/dev/null || true; "
-            "     done; "
-            "     sleep 0.02; "
-            "   done; "
-            "   sleep 3; "
-            "   for id in $(xdotool search --class thunderbird 2>/dev/null); do "
-            "     xprop -id $id -remove _NET_WM_WINDOW_OPACITY 2>/dev/null || true; "
-            "   done"
-            "  ) &"
-            "  sleep 0.1;"
-            "  exec %1 %2"
-            ")"
-        ).arg(executable).arg(args.join(' '));
-        mThunderbirdProcess->start("sh", QStringList() << "-c" << startupCmd);
-    } else {
-        mThunderbirdProcess->start(executable, args);
+        mStartupHideTicks = 0;
+        mStartupHideTimer.start();
+    }
+}
+
+void TrayIcon::onStartupHideTimer() {
+    mStartupHideTicks++;
+    if (mWinTools && mWinTools->lookup()) {
+        mWinTools->hide();
+        mStartupHideTimer.stop();
+        Log::debug("Successfully hid Thunderbird window on startup");
+    } else if (mStartupHideTicks >= 150) {
+        mStartupHideTimer.stop();
+        Log::debug("Timed out waiting for Thunderbird window to hide on startup");
     }
 }
 

@@ -63,6 +63,7 @@ class TrayIcon : public QSystemTrayIcon
 
 
     private slots:
+        void    onStartupHideTimer();
         // Updates the icon, this is called in blinking and snooze
         void    updateIcon();
 
@@ -212,6 +213,8 @@ class TrayIcon : public QSystemTrayIcon
         // was started before Birdtray (thus our process would just activate it and exit)
         // Thus checking this pointer for null doesn't mean TB is not started.
         QProcess    *   mThunderbirdProcess;
+        QTimer          mStartupHideTimer;
+        int             mStartupHideTicks;
 
         // System tray context menu. Once set, it remains there, so we have to modify existing one
         QMenu       *   mSystrayMenu;

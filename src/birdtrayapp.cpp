@@ -171,7 +171,8 @@ void BirdtrayApp::parseCmdArguments() {
             {{"s", SHOW_THUNDERBIRD_COMMAND}, tr("Show the Thunderbird window.")},
             {{"H", HIDE_THUNDERBIRD_COMMAND}, tr("Hide the Thunderbird window.")},
             {{"r", "reset-settings"}, tr("Reset the settings to the defaults.")},
-            {{"l", "log"}, tr("Write log to a file."), tr("file")}
+            {{"l", "log"}, tr("Write log to a file."), tr("file")},
+            {{"d", "detach"}, tr("Run Birdtray as a daemon in the background.")}
     });
     commandLineParser.process(*this);
 }

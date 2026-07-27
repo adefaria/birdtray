@@ -34,6 +34,9 @@ class WindowTools : public QObject
 
         // Return true if Thunderbird window is valid (hidden or shown)
         virtual bool    isValid() = 0;
+        
+        // Simulates a key combination sent directly to the window (e.g. "ctrl+i")
+        virtual bool    triggerKey(const QString& key) = 0;
 
     signals:
         /**
