@@ -258,17 +258,32 @@ void TrayIcon::updateIcon()
     else
         p.setOpacity( mBlinkingIconOpacity );
 
-    double marginFactor = 0.12; // 12% margin on each side to match other tray icons
+    double marginFactor = 0.16; // 16% margin on each side to match other tray icons (24px on 36px panel)
     int margin = static_cast<int>(temp.width() * marginFactor);
     if (margin < 2 && temp.width() >= 24) {
         margin = 2;
     }
     QRect iconRect = temp.rect().adjusted(margin, margin, -margin, -margin);
 
+    QPixmap iconPixmap = (unread != 0 && !settings->mNotificationIconUnread.isNull()) ?
+        settings->mNotificationIconUnread : settings->getNotificationIcon();
+
+    QRect targetRect = iconRect;
+    if (!iconPixmap.isNull() && iconPixmap.width() > 0 && iconPixmap.height() > 0) {
+        double aspect = static_cast<double>(iconPixmap.width()) / iconPixmap.height();
+        if (aspect > 1.0) {
+            int newHeight = static_cast<int>(iconRect.width() / aspect);
+            targetRect = QRect(iconRect.x(), iconRect.y() + (iconRect.height() - newHeight) / 2, iconRect.width(), newHeight);
+        } else if (aspect < 1.0) {
+            int newWidth = static_cast<int>(iconRect.height() * aspect);
+            targetRect = QRect(iconRect.x() + (iconRect.width() - newWidth) / 2, iconRect.y(), newWidth, iconRect.height());
+        }
+    }
+
     if (unread != 0 && !settings->mNotificationIconUnread.isNull()) {
-        p.drawPixmap(iconRect, settings->mNotificationIconUnread);
+        p.drawPixmap(targetRect, settings->mNotificationIconUnread);
     } else {
-        p.drawPixmap(iconRect, settings->getNotificationIcon());
+        p.drawPixmap(targetRect, settings->getNotificationIcon());
     }
 
     p.setFont(settings->mNotificationFont);
@@ -293,7 +308,7 @@ void TrayIcon::updateIcon()
                 settings->mNotificationFont,
                 static_cast<int>(settings->mNotificationMinimumFontSize),
                 static_cast<int>(settings->mNotificationMaximumFontSize),
-                countvalue, temp.size() - QSize(2, 2)));
+                countvalue, iconRect.size()));
 
         settings->mNotificationFont.setPointSize(fontsize);
         settings->mNotificationFont.setWeight(static_cast<QFont::Weight>(settings->mNotificationFontWeight));
@@ -306,7 +321,13 @@ void TrayIcon::updateIcon()
 
         double horizontalMargin = temp.width() - textBoundingRect.width();
         double verticalMargin = temp.height() - textBoundingRect.height();
-        double borderMargin = settings->mNotificationBorderWidth;
+        
+        // Dynamically scale the border width by the icon size to prevent pixelated/fuzzy blobs on small icons
+        double borderMargin = (settings->mNotificationBorderWidth * temp.width()) / 128.0;
+        if (borderMargin < 1.0 && settings->mNotificationBorderWidth > 0) {
+            borderMargin = 1.0;
+        }
+
         double horizontalOffset = ((horizontalMargin - borderMargin) / 2.0) * settings->horizontalUnreadCountOffset;
         double verticalOffset = ((verticalMargin - borderMargin) / 2.0) * -settings->verticalUnreadCountOffset;
         
@@ -316,7 +337,7 @@ void TrayIcon::updateIcon()
         if (settings->mNotificationBorderWidth > 0
             && settings->mNotificationBorderColor.isValid()) {
             p.strokePath(textPath, QPen(
-                    settings->mNotificationBorderColor, settings->mNotificationBorderWidth));
+                    settings->mNotificationBorderColor, borderMargin));
         }
         p.fillPath(textPath, mUnreadColor);
     }
@@ -359,6 +380,13 @@ void TrayIcon::updateIcon()
     {
         mLastDrawnIcon = temp.toImage();
         setIcon( temp );
+
+        const auto widgets = QApplication::topLevelWidgets();
+        for (QWidget *w : widgets) {
+            if (w->inherits("QSystemTrayIconSys")) {
+                w->repaint();
+            }
+        }
     }
     this->show();
 }

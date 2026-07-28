@@ -112,6 +112,18 @@ void UnreadMonitor::forceUpdateUnread()
 void UnreadMonitor::getUnreadCount_Mork(int &count, QColor &color)
 {
     Settings* settings = BirdtrayApp::get()->getSettings();
+
+    for (const QString &path : settings->watchedMorkFiles.orderedKeys()) {
+        if (!mDBWatcher.files().contains(path)) {
+            if (mDBWatcher.addPath(path)) {
+                clearWarning(path);
+            } else {
+                setWarning(tr("Unable to watch %1 for changes.")
+                        .arg(QFileInfo(path).fileName()), path);
+            }
+        }
+    }
+
     bool rescanall = false;
 
     // We rebuild and rescan the whole map if there is no such path in there, or map is empty (first run)
