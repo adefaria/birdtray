@@ -73,5 +73,5 @@ Please use the Github issue tracker of this repository. Please attach the log ou
 
 ## Author and license
 
-Birdtray was originally written by George Yunaev. Birdtray-MATE is maintained as a dedicated fork.
+Birdtray was originally written by George Yunaev. Birdtray-MATE is maintained as a dedicated fork by Andrew DeFaria.
 It is licensed under the GPLv3 license.
