@@ -1,40 +1,42 @@
-# Birdtray is a system tray new mail notification for Thunderbird, which does not require extensions. [![Build](https://github.com/gyunaev/birdtray/actions/workflows/main.yml/badge.svg)](https://github.com/gyunaev/birdtray/actions/workflows/main.yml)
+# Birdtray-MATE
 
-Birdtray is a free system tray notification for new mail for Thunderbird. It supports Linux and Windows (credit for adding and maintaining Windows support goes to @Abestanis). Patches to support other platforms are welcome.
+Birdtray-MATE is a system tray new mail notification for Thunderbird, specifically tailored and optimized for the MATE desktop environment. It is a fork of the original [Birdtray](https://github.com/gyunaev/birdtray).
 
-## Features
+Birdtray-MATE is free software and does not require Thunderbird extensions. It checks the unread e-mail status directly by reading the Thunderbird email mork database.
+
+## MATE-Specific Enhancements & Features
+
+This fork includes several improvements designed to enhance the experience on MATE and other traditional X11 desktop environments:
+
+- **MATE Panel Integration**: Dynamically scales to fit the MATE panel perfectly, regardless of panel height (e.g., 24px, 36px, 45px, 75px).
+- **Proportional Padding**: Applies a precise 16% padding margin to ensure the tray icon matches the aesthetic sizing of modern tray icons (like KeePassXC or Nextcloud) instead of stretching awkwardly.
+- **Dynamic Unread Count**: Font sizes and outline borders of the unread counter are dynamically scaled based on panel height, preventing fuzzy red blobs on small icons and overflow on large panels.
+- **Single-Click Minimization**: Left-clicking the tray icon toggles Thunderbird's visibility seamlessly, bypassing X11 focus-stealing prevention.
+- **Compositor Refresh Fix**: Fixes icon flashing/blinking on the MATE notification applet by explicitly forcing XEmbed repaints when the opacity or icon updates.
+- **Direct Thunderbird Actions**: Includes "New Event" and "New Task" directly in the tray icon's context menu.
+- **File Watcher Auto-Recovery**: More robust `.msf` file monitoring that automatically recovers if files are temporarily deleted or locked by Thunderbird folder repairs.
+
+## Standard Features Inherited from Birdtray
 
 - Shows the unread email counter in the Thunderbird system tray icon;
-
 - Optionally can animate the Thunderbird system tray icon if new mail is received;
-
 - You can snooze new mail notifications for a specific time period;
-
-- Birdtray checks the unread e-mail status directly by reading the Thunderbird email mork database. This means it does not need any extensions, and thus is immune to any future extension API changes in Thunderbird;
-
-- Starting from version 0.2 if you click on Birdtray icon, it can hide the Thunderbird window, and restore it. There is also context menu for that (this currently only works on Linux);
-
 - You can configure which accounts you want to check for unread emails on;
-
-- You can choose different font colors for different email accounts. This allows you, for example, to have blue unread count for personal emails, red unread count for work emails, and green unread count if both folders have unread mail.
-
+- You can choose different font colors for different email accounts.
 - Can launch Thunderbird when Birdtray starts, and terminate it when Birdtray quits (configurable).
-
 - You can choose the tray icon, or use Thunderbird original icon;
-
 - Can monitor that Thunderbird is running, and indicate it if you accidentally closed it;
-
 - Has configurable "New Email" functionality, allowing pre-configured email templates.
-
 
 ## Building
 
-To build Birdtray from source, you would need the following components:
+To build Birdtray-MATE from source, you would need the following components:
 
 - A C++ compiler
 - Cmake
 - Qt 6.2 or higher;
 - libX11-devel
+- libxtst-devel (required for X11 key injection for New Event/Task)
 
 To build, please do the following:
 
@@ -49,59 +51,27 @@ Launch the `./birdtray` executable from the build directory.
 
 ## Installation
 
-Run `cmake --build . --target install` to install Birdtray.
+Run `cmake --build . --target install` to install Birdtray-MATE.
 On Unix systems, you can configure the install location by running
 `cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..` before the command above.
-On Windows, the command will build a graphical installer and execute it.
-It requires [NSIS](https://nsis.sourceforge.io/Main_Page) to be installed on your system.
-It is recommended for Windows users to use the
-[precompiled installers for the latest release](https://github.com/gyunaev/birdtray/releases/latest).
 
 ## Usage
 
-Once started, Birdtray will show the Thunderbird icon in system tray.
+Once started, Birdtray-MATE will show the Thunderbird icon in system tray.
 
-Right-click on this icon, and click Settings. Go to Monitoring tab ans select the Thunderbird MSF file for the mailbox you'd like to monitor. You can specify different notification colors for each mailbox. Birdtray will show the new email count using this color if only this folder has new mail. If more than one folder has new mail, the default color will be used.
-
-Then select the font and default color (which will be used if more than one monitored folder has new mail).
-
-You can also enable birdtray to start Thunderbird when you start Birdtray, or enable show/hide Thunderbird when the system tray icon is clicked, in settings.
-
-Once you change settings, often you need to restart birdtray for the new settings to take effect.
+Right-click on this icon, and click Settings. Go to Monitoring tab and select the Thunderbird MSF file for the mailbox you'd like to monitor. 
 
 ### Configuration File Location
-*Birdtray configuration is stored on a per-user basis, where the location differs depending on environment, as follows:*
+*Birdtray-MATE configuration is stored on a per-user basis:*
 
 #### Linux Package Installation
 `$HOME/.config/birdtray-config.json`
 
-#### Linux Flatpak Installation
-`$HOME/.var/app/com.ulduzsoft.Birdtray/config/ulduzsoft/birdtray-config.json`
-
-#### Windows Installation
-`%LocalAppData%\ulduzsoft\birdtray\birdtray-config.json`
-
-## Troubleshooting
-
-If Birdtray shows the wrong number of unread messages, it can be caused by a corrupt mork file.
-This can often be fixed by using the `Repair` functionality in Thunderbird in the mail folder settings.
-
-Generally Birdtray expects a spec-compliant desktop manager. If you're using a barebone or non-standard/light/simple desktop manager, it is very likely that some features of Birdtray will not work properly. Most likely candidates are hiding and restoring Thunderbird window(s) - including their position and state. But sometimes even a system tray icon isn't shown. Linux Mint with Cinnamon seem to be one particularly troublesome distro which reports many issues.
-
-Working with Wayland: at this moment Birdtray partially works with Wayland - email monitoring functionality works, but show/hide does not. Please track the issue https://github.com/gyunaev/birdtray/issues/426 to see the current status. Please do not report Wayland-related issues unless you built Birdtray from source yourself.
-
 ## Submitting bugs and feature requests
 
-Please use Github issue tracker. Please attach the log output, if relevant. It could be obtained from Settings -> Advanced (tab) -> Show Log Window (button) -> copy-paste from it into bug report.
-
-### Translations
-
-Translations are maintained by the community.
-If you want to add a translation, you can follow [this guide](https://github.com/gyunaev/birdtray/wiki/Add-a-new-translation)
-and if you want to edit an existing translation, read [this page](https://github.com/gyunaev/birdtray/wiki/Edit-an-existing-translation).
+Please use the Github issue tracker of this repository. Please attach the log output, if relevant. It could be obtained from Settings -> Advanced (tab) -> Show Log Window (button) -> copy-paste from it into bug report.
 
 ## Author and license
 
-Birdtray is written by George Yunaev, and is licensed under GPLv3 license.
-
-![birdtray-settings](screenshots/birdtray-settings.png)
+Birdtray was originally written by George Yunaev. Birdtray-MATE is maintained as a dedicated fork.
+It is licensed under the GPLv3 license.

@@ -4,11 +4,11 @@
   <id>com.ulduzsoft.Birdtray</id>
   <translation type="qt">birdtray</translation>
   <metadata_license>CC0-1.0</metadata_license>
-  <name>Birdtray</name>
+  <name>Birdtray-MATE</name>
   <summary>System tray new mail notification for Thunderbird</summary>
   <description>
     <p>
-      Birdtray is a system tray new mail notification for Thunderbird, which does not require extensions
+      Birdtray-MATE is a system tray new mail notification for Thunderbird, specifically tailored for the MATE desktop environment, which does not require extensions
     </p>
     <p>Features:</p>
     <ul>
